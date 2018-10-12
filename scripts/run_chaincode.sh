@@ -1,4 +1,4 @@
-peer chaincode install -p chaincodedev/chaincode/vin -n mycc -v 0
+peer chaincode install -p chaincode/vin_chaincode -n mycc -v 0
 sleep 4
 peer chaincode instantiate -n mycc -v 0 -c '{"Args":[]}' -C myc
 sleep 4
