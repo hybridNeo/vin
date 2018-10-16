@@ -1,0 +1,109 @@
+version: '2'
+
+services:
+
+  orderer.vin.gov:
+    container_name: orderer.vin.gov
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/tls/:/var/hyperledger/orderer/tls
+      # - orderer.vin.gov:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.dmv.vin.gov:
+    container_name: peer0.dmv.vin.gov
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.dmv.vin.gov
+      - CORE_PEER_ADDRESS=peer0.dmv.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.dmv.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.dmv.vin.gov:7051
+      - CORE_PEER_LOCALMSPID=DMVMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/dmv.vin.gov/peers/peer0.dmv.vin.gov/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/dmv.vin.gov/peers/peer0.dmv.vin.gov/tls:/etc/hyperledger/fabric/tls
+          # - peer0.dmv.vin.gov:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.dmv.vin.gov:
+    container_name: peer1.dmv.vin.gov
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.dmv.vin.gov
+      - CORE_PEER_ADDRESS=peer1.dmv.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.dmv.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.dmv.vin.gov:7051
+      - CORE_PEER_LOCALMSPID=DMVMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/dmv.vin.gov/peers/peer1.dmv.vin.gov/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/dmv.vin.gov/peers/peer1.dmv.vin.gov/tls:/etc/hyperledger/fabric/tls
+          # - peer1.dmv.vin.gov:/var/hyperledger/production
+
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.manufacturers.vin.gov:
+    container_name: peer0.manufacturers.vin.gov
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.manufacturers.vin.gov
+      - CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.manufacturers.vin.gov:7051
+      - CORE_PEER_LOCALMSPID=ManufacturersMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/tls:/etc/hyperledger/fabric/tls
+          # - peer0.manufacturers.vin.gov:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer1.manufacturers.vin.gov:
+    container_name: peer1.manufacturers.vin.gov
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.manufacturers.vin.gov
+      - CORE_PEER_ADDRESS=peer1.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.manufacturers.vin.gov:7051
+      - CORE_PEER_LOCALMSPID=ManufacturersMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer1.manufacturers.vin.gov/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer1.manufacturers.vin.gov/tls:/etc/hyperledger/fabric/tls
+          # - peer1.manufacturers.vin.gov:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053

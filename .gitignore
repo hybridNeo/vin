@@ -17,3 +17,6 @@
 # Useless docker environments
 docker/basic-network/
 docker/first-network/
+
+# Swap files
+*.swp
