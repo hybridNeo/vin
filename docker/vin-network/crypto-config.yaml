@@ -1,0 +1,20 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: vin.gov
+    Specs:
+      - Hostname: orderer
+PeerOrgs:
+  - Name: DMV
+    Domain: dmv.vin.gov
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+  - Name: Manufacturers
+    Domain: manufacturers.vin.gov
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
