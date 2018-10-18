@@ -50,7 +50,7 @@ Organizations:
 
         AnchorPeers:
             - Host: peer0.manufacturers.vin.gov
-              Port: 7051
+              Port: 9051
 
 Capabilities:
     Channel: &ChannelCapabilities
