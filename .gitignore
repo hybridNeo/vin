@@ -20,3 +20,7 @@ docker/first-network/
 
 # Swap files
 *.swp
+
+# Network crypto
+docker/vin-network/channel-artifacts
+docker/vin-network/crypto-config
