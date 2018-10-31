@@ -27,3 +27,6 @@ node/node_modules
 # Network crypto
 docker/vin-network/channel-artifacts
 docker/vin-network/crypto-config
+
+# Compiled Binary
+chaincode/vin_chaincode/vin_chaincode
