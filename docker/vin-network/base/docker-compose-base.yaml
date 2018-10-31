@@ -13,7 +13,7 @@ services:
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
-      - ORDERER_GENERAL_TLS_ENABLED=false
+      - ORDERER_GENERAL_TLS_ENABLED=true
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
@@ -55,8 +55,8 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer1.dmv.vin.gov
-      - CORE_PEER_ADDRESS=peer1.dmv.vin.gov:8051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.dmv.vin.gov:8051
+      - CORE_PEER_ADDRESS=peer1.dmv.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.dmv.vin.gov:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.dmv.vin.gov:7051
       - CORE_PEER_LOCALMSPID=DMVMSP
     volumes:
@@ -66,8 +66,8 @@ services:
           # - peer1.dmv.vin.gov:/var/hyperledger/production
 
     ports:
-      - 8051:8051
-      - 8053:8053
+      - 8051:7051
+      - 8053:7053
 
   peer0.manufacturers.vin.gov:
     container_name: peer0.manufacturers.vin.gov
@@ -76,9 +76,9 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer0.manufacturers.vin.gov
-      - CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:9051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.manufacturers.vin.gov:9051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.manufacturers.vin.gov:10051
+      - CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.manufacturers.vin.gov:7051
       - CORE_PEER_LOCALMSPID=ManufacturersMSP
     volumes:
         - /var/run/:/host/var/run/
@@ -86,8 +86,8 @@ services:
         - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/tls:/etc/hyperledger/fabric/tls
           # - peer0.manufacturers.vin.gov:/var/hyperledger/production
     ports:
-      - 9051:9051
-      - 9053:9053
+      - 9051:7051
+      - 9053:7053
 
   peer1.manufacturers.vin.gov:
     container_name: peer1.manufacturers.vin.gov
@@ -96,9 +96,9 @@ services:
       service: peer-base
     environment:
       - CORE_PEER_ID=peer1.manufacturers.vin.gov
-      - CORE_PEER_ADDRESS=peer1.manufacturers.vin.gov:10051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.manufacturers.vin.gov:10051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.manufacturers.vin.gov:9051
+      - CORE_PEER_ADDRESS=peer1.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.manufacturers.vin.gov:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.manufacturers.vin.gov:7051
       - CORE_PEER_LOCALMSPID=ManufacturersMSP
     volumes:
         - /var/run/:/host/var/run/
@@ -106,5 +106,5 @@ services:
         - ../crypto-config/peerOrganizations/manufacturers.vin.gov/peers/peer1.manufacturers.vin.gov/tls:/etc/hyperledger/fabric/tls
           # - peer1.manufacturers.vin.gov:/var/hyperledger/production
     ports:
-      - 10051:10051
-      - 10053:10053
+      - 10051:7051
+      - 10053:7053
