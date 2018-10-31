@@ -52,6 +52,22 @@ services:
     networks:
       - vin_main_network
 
+  peer0.civilians.vin.gov:
+    container_name: peer0.civilians.vin.gov
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.civilians.vin.gov
+    networks:
+      - vin_main_network
+
+  peer1.civilians.vin.gov:
+    container_name: peer1.civilians.vin.gov
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.civilians.vin.gov
+    networks:
+      - vin_main_network
+
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:$IMAGE_TAG
@@ -83,6 +99,8 @@ services:
         - peer1.dmv.vin.gov
         - peer0.manufacturers.vin.gov
         - peer1.manufacturers.vin.gov
+        - peer0.civilians.vin.gov
+        - peer1.civilians.vin.gov
 
     networks:
       - vin_main_network
