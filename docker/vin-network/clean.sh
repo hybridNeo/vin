@@ -1,3 +1,6 @@
 rm -r channel-artifacts
 rm -r crypto-config
-dockerrm
+docker kill $(docker ps -aq)
+docker rm $(docker ps -aq)
+
+docker network prune -f

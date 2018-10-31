@@ -1,3 +1,6 @@
+echo
+echo
+echo
 echo "############################################"
 echo "#     Generating Crypto Material           #"
 echo "############################################"
@@ -70,7 +73,7 @@ echo
 echo
 echo
 echo "############################################"
-echo "#       Executing Chaincode on Peers       #"
+echo "#              Creating Channel            #"
 echo "############################################"
 echo
 
@@ -82,10 +85,115 @@ export ORDERER=orderer.vin.gov:7050
 
 docker exec cli peer channel create -c $CHANNEL_NAME -f channel-artifacts/channel.tx -o orderer.vin.gov:7050 --tls true --cafile "/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/msp/tlscacerts/tlsca.vin.gov-cert.pem"
 
+
+
+echo
+echo
+echo
+echo "############################################"
+echo "#      Joining DMV Peer 0 to Channel       #"
+echo "############################################"
+echo
+
 docker exec cli peer channel join -b $CHANNEL_NAME.block
+
+echo
+echo
+echo
+echo "############################################"
+echo "#      Joining DMV Peer 1 to Channel       #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer1.dmv.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/dmv.vin.gov/peers/peer1.dmv.vin.gov/tls/ca.crt && peer channel join -b $CHANNEL_NAME.block"
+
+echo
+echo
+echo
+echo "############################################"
+echo "#  Joining Manufacturers Peer 0 to Channel #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/tls/ca.crt && export CORE_PEER_LOCALMSPID=ManufacturersMSP && export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/users/Admin@manufacturers.vin.gov/msp && peer channel join -b $CHANNEL_NAME.block"
+
+echo
+echo
+echo
+echo "############################################"
+echo "#  Joining Manufacturers Peer 1 to Channel #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer1.manufacturers.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/peers/peer1.manufacturers.vin.gov/tls/ca.crt && export CORE_PEER_LOCALMSPID=ManufacturersMSP && export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/users/Admin@manufacturers.vin.gov/msp && peer channel join -b $CHANNEL_NAME.block"
+
+echo
+echo
+echo
+echo "############################################"
+echo "#          Updating DMV Anchor Peer        #"
+echo "############################################"
+echo
 
 docker exec cli peer channel update -o orderer.vin.gov:7050 -c $CHANNEL_NAME -f ./channel-artifacts/DMVMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/msp/tlscacerts/tlsca.vin.gov-cert.pem
 
-#docker exec -e "CORE_PEER_LOCALMSPID=DMVMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/dmv.vin.gov/users/Admin@dmv.vin.gov/msp" cli peer chaincode install -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -p $CHAINCODE_PATH
+echo
+echo
+echo
+echo "############################################"
+echo "#    Updating Manufacturers Anchor Peer    #"
+echo "############################################"
+echo
 
-#docker exec -e "CORE_PEER_LOCALMSPID=DMVMSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/dmv.vin.gov/users/Admin@dmv.vin.gov/msp" cli peer chaincode instantiate -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -C $CHANNEL_NAME -o $ORDERER -c '{"Args":[""]}' -P "OR ('OrdererMSP.member')"
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/tls/ca.crt && export CORE_PEER_LOCALMSPID=ManufacturersMSP && export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/users/Admin@manufacturers.vin.gov/msp && peer channel update -o orderer.vin.gov:7050 -c $CHANNEL_NAME -f ./channel-artifacts/ManufacturersMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/msp/tlscacerts/tlsca.vin.gov-cert.pem"
+
+echo
+echo
+echo
+echo "############################################"
+echo "#      Install Chaincode on DMV Peer 0     #"
+echo "############################################"
+echo
+
+docker exec cli peer chaincode install -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -p $CHAINCODE_PATH
+
+echo
+echo
+echo
+echo "############################################"
+echo "#      Install Chaincode on DMV Peer 1     #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer1.dmv.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/dmv.vin.gov/peers/peer1.dmv.vin.gov/tls/ca.crt && peer chaincode install -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -p $CHAINCODE_PATH"
+
+echo
+echo
+echo
+echo "############################################"
+echo "# Install chaincode on Manufacturer Peer 0 #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer0.manufacturers.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/peers/peer0.manufacturers.vin.gov/tls/ca.crt && export CORE_PEER_LOCALMSPID=ManufacturersMSP && export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/users/Admin@manufacturers.vin.gov/msp && peer chaincode install -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -p $CHAINCODE_PATH"
+
+echo
+echo
+echo
+echo "############################################"
+echo "# Install chaincode on Manufacturer Peer 1 #"
+echo "############################################"
+echo
+
+docker exec cli /bin/bash -c "export CORE_PEER_ADDRESS=peer1.manufacturers.vin.gov:7051 && export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/peers/peer1.manufacturers.vin.gov/tls/ca.crt && export CORE_PEER_LOCALMSPID=ManufacturersMSP && export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/manufacturers.vin.gov/users/Admin@manufacturers.vin.gov/msp && peer chaincode install -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -p $CHAINCODE_PATH"
+
+
+echo
+echo
+echo
+echo "############################################"
+echo "#     Instantiate Chaincode on Channel     #"
+echo "############################################"
+echo
+
+docker exec cli peer chaincode instantiate -o orderer.vin.gov:7050 -C $CHANNEL_NAME --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/vin.gov/orderers/orderer.vin.gov/msp/tlscacerts/tlsca.vin.gov-cert.pem -n $CHAINCODE_NAME -v $CHAINCODE_VERSION -c '{"Args":[]}' # -P "AND ('DMVMSP.peer', 'ManufacturersMSP.peer')"
