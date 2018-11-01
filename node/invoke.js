@@ -62,7 +62,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 		//targets: let default to the peer assigned to the client
 		chaincodeId: 'vin_chaincode',
 		fcn: 'createCar',
-		args: ['abc123', 'someDude'],
+		args: ['abc123', 'user'],
 		chainId: 'vin-main-channel',
 		txId: tx_id
 	};
@@ -73,7 +73,6 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	var proposalResponses = results[0];
 	var proposal = results[1];
 	let isProposalGood = false;
-	console.log(proposalResponses)
 	if (proposalResponses && proposalResponses[0].response &&
 		proposalResponses[0].response.status === 200) {
 			isProposalGood = true;
