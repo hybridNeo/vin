@@ -21,8 +21,9 @@ docker/first-network/
 # Swap files
 *.swp
 
-# Node modules
+# Node extras
 node/node_modules
+node/hfc-key-store
 
 # Network crypto
 docker/vin-network/channel-artifacts
