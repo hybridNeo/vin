@@ -17,7 +17,7 @@ var os = require('os');
 var fabric_client = new Fabric_Client();
 
 // setup the fabric network
-var channel = fabric_client.newChannel('mychannel');
+var channel = fabric_client.newChannel('vin-main-channel');
 var peer = fabric_client.newPeer('grpc://localhost:7051');
 channel.addPeer(peer);
 var order = fabric_client.newOrderer('grpc://localhost:7050')
@@ -60,10 +60,10 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	// must send the proposal to endorsing peers
 	var request = {
 		//targets: let default to the peer assigned to the client
-		chaincodeId: 'fabcar',
-		fcn: '',
-		args: [''],
-		chainId: 'mychannel',
+		chaincodeId: 'vin_chaincode',
+		fcn: 'createCar',
+		args: ['abc123', 'someDude'],
+		chainId: 'vin-main-channel',
 		txId: tx_id
 	};
 
@@ -73,6 +73,7 @@ Fabric_Client.newDefaultKeyValueStore({ path: store_path
 	var proposalResponses = results[0];
 	var proposal = results[1];
 	let isProposalGood = false;
+	console.log(proposalResponses)
 	if (proposalResponses && proposalResponses[0].response &&
 		proposalResponses[0].response.status === 200) {
 			isProposalGood = true;
