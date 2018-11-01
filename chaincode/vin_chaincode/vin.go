@@ -7,14 +7,8 @@ import (
 	"github.com/hyperledger/fabric/protos/peer"
 )
 
-
 type Car struct {
-	Owner		string	`json:"owner"`
-}
-
-
-type User struct {
-	Role		string `json:"role"`
+	Owner		string `json:"owner"`
 }
 
 
@@ -25,9 +19,6 @@ type PendingTransfer struct {
 
 
 func (c *Car) Init(stub shim.ChaincodeStubInterface) peer.Response {
-	user := &User{"DMV"}
-	userAsJSON, _ := json.Marshal(user)
-	_ = stub.PutState("DMV", userAsJSON)
 	return shim.Success(nil)
 }
 
@@ -44,10 +35,6 @@ func (c *Car) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		result, err = createCarTransfer(stub, args)
 	} else if function == "fulfillCarTransfer" {
 		result, err = fulfillCarTransfer(stub, args)
-	}else if function == "createUser" {
-		result, err = createUser(stub, args)
-	} else if function == "getUser" {
-		result, err = getUser(stub, args)
 	}
 
 	if err != nil {
@@ -56,34 +43,10 @@ func (c *Car) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	return shim.Success([]byte(result))
 }
 
-
-// args = [Username, Role, UserCalling]
-func createUser(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 3 {
-		return "", fmt.Errorf("incorrect number of arguments: need username and role")
-	}
-	funcRoles := []string{"DMV"}
-	if isValidUserRole(stub, args[2], funcRoles) == false {
-		return "", fmt.Errorf("user not permitted to make other users")
-	}
-	user := &User{args[1]}
-	userAsJSON, _ := json.Marshal(user)
-	err := stub.PutState(args[0], userAsJSON)
-	if err != nil {
-		return "", fmt.Errorf("could not put user on ledger")
-	}
-	return args[0], nil
-}
-
-
-// args = [VIN, UserCalling]
+// args = [VIN, Owner]
 func createCar(stub shim.ChaincodeStubInterface, args []string) (string, error) {
 	if len(args) != 2 {
 		return "", fmt.Errorf("incorrect number of arguments: need owner and vin")
-	}
-	funcRoles := []string{"DMV", "MANUFACTURER"}
-	if isValidUserRole(stub, args[1], funcRoles) == false {
-		return "", fmt.Errorf("user not permitted to create cars")
 	}
 	car := &Car{args[1]}
 	carAsJSON, _ := json.Marshal(car)
@@ -95,43 +58,21 @@ func createCar(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 }
 
 
-// args = [VIN, UserCalling]
+// args = [VIN]
 func getCar(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 2 {
+	if len(args) != 1 {
 		return "", fmt.Errorf("incorrect args: need vin and user")
 	}
 	value, err := stub.GetState(args[0])
 	if err != nil {
-		return "", fmt.Errorf("vailed to get car %s with error %s", args[0], err)
+		return "", fmt.Errorf("failed to get car %s with error %s", args[0], err)
 	} else if value == nil {
 		return "", fmt.Errorf("asset not found %s", args[0])
-	} else {
-		car := Car{}
-		json.Unmarshal(value, &car)
-		if car.Owner != args[1] && !isValidUserRole(stub, args[1], []string{"DMV"}) {
-			return "", fmt.Errorf("user not permitted to view car")
-		}
 	}
 	return string(value), nil
 }
 
 
-// args = [Username]
-func getUser(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 1 {
-		return "", fmt.Errorf("incorrect args")
-	}
-	value, err := stub.GetState(args[0])
-	if err != nil {
-		return "", fmt.Errorf("failed to get car %s with error %s", args[0], err)
-	}
-	if value == nil {
-		return "", fmt.Errorf("asset not found %s", args[0])
-	}
-	return string(value), nil
-}
-
-// TODO find valid users to fulfill transfers/ Allow DMV????
 // args = [CarReceiver/DMV, VIN]
 func fulfillCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string, error) {
 	if len(args) != 2 {
@@ -161,11 +102,10 @@ func fulfillCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string
 
 
 // args = [VIN, currentOwner, newOwner]
-// TODO Verify users?
 func createCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string, error) {
 	if len(args) != 3 {
 		return "", fmt.Errorf("incorrect args: need vin, creator and target")
-	} else if !carExists(stub, args[2]) {
+	} else if !carExists(stub, args[0]) {
 		return "", fmt.Errorf("car does not exist; cannot be transfered")
 	} else if !userOwnsCar(stub, args[0], args[1]) {
 		return "", fmt.Errorf("user does not have permission to transfer car")
@@ -178,19 +118,6 @@ func createCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string,
 	}
 	return args[0], nil
 }
-
-
-func isValidUserRole(stub shim.ChaincodeStubInterface, userToGet string,  list []string) bool {
-	value, err := stub.GetState(userToGet)
-	if err != nil { return false }
-	user := User{}
-	err = json.Unmarshal(value, &user)
-	if err != nil {return false}
-	if isIn(user.Role, list) {
-		return true
-	} else {return false}
-}
-
 
 func isIn(a string, list []string) bool {
 	for _, b := range list {
