@@ -11,6 +11,7 @@ $('#enroll-admin').click( function() {
 $('#enroll-user').click( function() {
   var data = {};
   data.username = document.getElementById("username_form").elements[0].value;
+  data.mspid = document.getElementById("username_form").elements[1].value;
   console.log(data.username)
   var response = $.ajax({
     type: 'POST',

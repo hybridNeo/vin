@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  enrollUser: function (username) {
+  enrollUser: function (username, mspid) {
     var Fabric_Client = require('fabric-client');
     var Fabric_CA_Client = require('fabric-ca-client');
 
@@ -57,7 +57,7 @@ module.exports = {
           console.log('Successfully enrolled member user ' + username);
           return fabric_client.createUser(
             {username: username,
-            mspid: 'DMVMSP',
+            mspid: mspid,
             cryptoContent: { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate }
           });
         }).then((user) => {

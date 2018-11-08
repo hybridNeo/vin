@@ -22,8 +22,9 @@ app.post('/enrollAdmin', function(req, res) {
 
 app.post('/enrollUser', function(req, res) {
   var username = req.body.username
-  console.log('Enrolling ' + username)
-  enrollUser.enrollUser(username)
+  var mspid = req.body.mspid
+  console.log('Enrolling ' + username + ' with MSP: ' + mspid)
+  enrollUser.enrollUser(username, mspid)
   res.sendStatus(200)
 })
 
