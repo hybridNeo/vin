@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  enrollUser: function () {
+  enrollUser: function (username) {
     var Fabric_Client = require('fabric-client');
     var Fabric_CA_Client = require('fabric-ca-client');
 
@@ -47,16 +47,16 @@ module.exports = {
 
           // at this point we should have the admin user
           // first need to register the user with the CA server
-          return fabric_ca_client.register({enrollmentID: 'user1', role: 'client'}, admin_user);
+          return fabric_ca_client.register({enrollmentID: username, role: 'client'}, admin_user);
         }).then((secret) => {
           // next we need to enroll the user with CA server
-          console.log('Successfully registered user1 - secret:'+ secret);
+          console.log('Successfully registered ' + username + ' - secret:'+ secret);
 
-          return fabric_ca_client.enroll({enrollmentID: 'user1', enrollmentSecret: secret});
+          return fabric_ca_client.enroll({enrollmentID: username, enrollmentSecret: secret});
         }).then((enrollment) => {
-          console.log('Successfully enrolled member user "user1" ');
+          console.log('Successfully enrolled member user ' + username);
           return fabric_client.createUser(
-            {username: 'user1',
+            {username: username,
             mspid: 'DMVMSP',
             cryptoContent: { privateKeyPEM: enrollment.key.toBytes(), signedCertPEM: enrollment.certificate }
           });
@@ -65,7 +65,7 @@ module.exports = {
 
           return fabric_client.setUserContext(member_user);
         }).then(()=>{
-          console.log('User1 was successfully registered and enrolled and is ready to interact with the fabric network');
+          console.log(username + ' was successfully registered and enrolled and is ready to interact with the fabric network');
 
         }).catch((err) => {
           console.error('Failed to register: ' + err);

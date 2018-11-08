@@ -9,9 +9,14 @@ $('#enroll-admin').click( function() {
 });
 
 $('#enroll-user').click( function() {
+  var data = {};
+  data.username = document.getElementById("username_form").elements[0].value;
+  console.log(data.username)
   var response = $.ajax({
     type: 'POST',
     url: 'http://192.168.1.129:3000/enrollUser',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
     success: function(data) {
       document.getElementById('userResponse').innerHTML = 'Enrolled User'
     }

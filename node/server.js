@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const enroll = require('./enrollAdmin')
 const enrollUser = require('./registerUser')
+const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 
@@ -9,6 +10,8 @@ const port = 3000
 console.log("ON")
 
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 
 app.post('/enrollAdmin', function(req, res) {
   console.log('Enrolling admin')
@@ -18,8 +21,9 @@ app.post('/enrollAdmin', function(req, res) {
 })
 
 app.post('/enrollUser', function(req, res) {
-  console.log('Enrolling User1')
-  enrollUser.enrollUser()
+  var username = req.body.username
+  console.log('Enrolling ' + username)
+  enrollUser.enrollUser(username)
   res.sendStatus(200)
 })
 
