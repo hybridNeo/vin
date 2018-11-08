@@ -28,4 +28,14 @@ app.post('/enrollUser', function(req, res) {
   res.sendStatus(200)
 })
 
+app.post('/invokeFunction', function(req, res) {
+  console.log('Pinged Invoke')
+  res.sendStatus(200)
+})
+
+app.get('/queryChaincode', function(req, res) {
+  console.log('Pinged Query')
+  res.sendStatus(200)
+})
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

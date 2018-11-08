@@ -23,3 +23,23 @@ $('#enroll-user').click( function() {
     }
   })
 })
+
+$('#invoke-chaincode').click( function() {
+  var response = $.ajax({
+    type: 'POST',
+    url: 'http://192.168.1.129:3000/invokeFunction',
+    success: function(data) {
+      document.getElementById('invokeResponse').innerHTML = 'Coming Soon'
+    }
+  })
+})
+
+$('#query-chaincode').click( function() {
+  var response = $.ajax({
+    type: 'GET',
+    url: 'http://192.168.1.129:3000/queryChaincode',
+    success: function(data) {
+      document.getElementById('queryResponse').innerHTML = 'Coming Soon'
+    }
+  })
+})
