@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const enroll = require('./enrollAdmin')
 const enrollUser = require('./registerUser')
+const invoke = require('./invoke')
 const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
@@ -29,8 +30,13 @@ app.post('/enrollUser', function(req, res) {
 })
 
 app.post('/invokeFunction', function(req, res) {
-  console.log('Pinged Invoke')
-  res.sendStatus(200)
+    var functionName = req.body.functionName
+    var arg1 = req.body.arg1
+    var arg2 = req.body.arg2
+    var arg3 = req.body.arg3
+    console.log(functionName)
+    invoke.invokeChaincode(functionName, arg1, arg2, arg3)
+    res.sendStatus(200)
 })
 
 app.get('/queryChaincode', function(req, res) {

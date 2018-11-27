@@ -45,7 +45,7 @@ func (c *Car) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 
 // args = [VIN, Owner]
 func createCar(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return "", fmt.Errorf("incorrect number of arguments: need owner and vin")
 	}
 	car := &Car{args[1]}
@@ -60,7 +60,7 @@ func createCar(stub shim.ChaincodeStubInterface, args []string) (string, error) 
 
 // args = [VIN]
 func getCar(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 1 {
+	if len(args) < 1 {
 		return "", fmt.Errorf("incorrect args: need vin and user")
 	}
 	value, err := stub.GetState(args[0])
@@ -75,7 +75,7 @@ func getCar(stub shim.ChaincodeStubInterface, args []string) (string, error) {
 
 // args = [CarReceiver/DMV, VIN]
 func fulfillCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return "", fmt.Errorf("incorrect args")
 	}
 	value, err := stub.GetState("pending:" + args[0] + ":" + args[1])
@@ -103,7 +103,7 @@ func fulfillCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string
 
 // args = [VIN, currentOwner, newOwner]
 func createCarTransfer(stub shim.ChaincodeStubInterface, args []string) (string, error) {
-	if len(args) != 3 {
+	if len(args) < 3 {
 		return "", fmt.Errorf("incorrect args: need vin, creator and target")
 	} else if !carExists(stub, args[0]) {
 		return "", fmt.Errorf("car does not exist; cannot be transfered")

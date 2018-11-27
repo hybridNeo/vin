@@ -25,11 +25,18 @@ $('#enroll-user').click( function() {
 })
 
 $('#invoke-chaincode').click( function() {
+  var data = {}
+  data.functionName = document.getElementById("invoke-form").elements[0].value;
+  data.arg1 = document.getElementById("invoke-form").elements[1].value;
+  data.arg2 = document.getElementById("invoke-form").elements[2].value;
+  data.arg3 = document.getElementById("invoke-form").elements[3].value;
   var response = $.ajax({
     type: 'POST',
     url: 'http://192.168.1.129:3000/invokeFunction',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
     success: function(data) {
-      document.getElementById('invokeResponse').innerHTML = 'Coming Soon'
+      document.getElementById('invokeResponse').innerHTML = 'Invoked'
     }
   })
 })
