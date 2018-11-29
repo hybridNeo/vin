@@ -13,7 +13,6 @@ mv crypto-config/peerOrganizations/manufacturers.vin.gov/ca/*_sk crypto-config/p
 
 mv crypto-config/peerOrganizations/civilians.vin.gov/ca/*_sk crypto-config/peerOrganizations/civilians.vin.gov/ca/ca.civilians.vin.gov-key.pem
 
-
 export FABRIC_CFG_PATH=$PWD
 
 echo
