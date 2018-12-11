@@ -42,11 +42,15 @@ $('#invoke-chaincode').click( function() {
 })
 
 $('#query-chaincode').click( function() {
+  var data = {}
+  data.vin = document.getElementById("query-form").elements[0].value;
   var response = $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: 'http://192.168.1.129:3000/queryChaincode',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
     success: function(data) {
-      document.getElementById('queryResponse').innerHTML = 'Coming Soon'
+      document.getElementById('queryResponse').innerHTML = data.owner
     }
   })
 })
