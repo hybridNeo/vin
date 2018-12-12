@@ -1,7 +1,11 @@
 $('#enroll-admin').click( function() {
+  var data = {}
+  data.adminMSP = document.getElementById("admin-form").elements[0].value;
   var response = $.ajax({
     type: 'POST',
     url: 'http://192.168.1.129:3000/enrollAdmin',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
     complete: function(data) {
       document.getElementById('here').innerHTML = "Enrolled Admin";
     }
@@ -37,7 +41,7 @@ $('#invoke-chaincode').click( function() {
     contentType: 'application/json',
     success: function(data) {
       document.getElementById('invokeResponse').innerHTML = 'Invoked'
-    }
+    },
   })
 })
 

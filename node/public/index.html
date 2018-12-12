@@ -3,6 +3,10 @@
   <body>
     <h1>VIN</h1>
     <h2>Enroll Admin</h2>
+    <form id="admin-form">
+      Admin MSP: <input type="text" name="admin-enroll">
+      <br><br>
+    </form>
     <button id="enroll-admin">Enroll</button>
     <p id='here'></p>
     <br><br>
@@ -17,9 +21,9 @@
     <h2>Invoke Chaincode</h2>
     <form id="invoke-form">
       Function: <input type="text" name="invoke-function"><br>
-      Arg1: <input type="text" name="arg1"><br>
-      Arg2: <input type="text" name="arg2"><br>
-      Arg3: <input type="text" name="arg3"><br>
+      VIN: <input type="text" name="arg1"><br>
+      User: <input type="text" name="arg2"><br>
+      Other: <input type="text" name="arg3"><br>
     </form>
     <button id="invoke-chaincode">Invoke</button>
     <p id="invokeResponse"></p>
